@@ -24,6 +24,200 @@ const RACE_KEYWORDS = ["race","triathlon","70.3","ironman","half iron","olympic 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// KNOWN RACES CONFIG — curated database of real events
+// Matched against detected activities by keyword + distance.
+// Add your own races here to get rich metadata shown in the Races tab.
+// ═══════════════════════════════════════════════════════════════════════════════
+const KNOWN_RACES = [
+  // ── Ironman Full ──────────────────────────────────────────────────────────
+  { id: "im-hawaii",           name: "Ironman World Championship",      series: "Ironman",     type: "Full",     location: "Kailua-Kona, HI",         keywords: ["kona","hawaii ironman","world championship"],           swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-cda",              name: "Ironman Coeur d'Alene",           series: "Ironman",     type: "Full",     location: "Coeur d'Alene, ID",        keywords: ["coeur d'alene","cda ironman"],                          swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-texas",            name: "Ironman Texas",                   series: "Ironman",     type: "Full",     location: "The Woodlands, TX",        keywords: ["ironman texas","woodlands ironman"],                    swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-arizona",          name: "Ironman Arizona",                 series: "Ironman",     type: "Full",     location: "Tempe, AZ",                keywords: ["ironman arizona","imaz"],                               swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-florida",          name: "Ironman Florida",                 series: "Ironman",     type: "Full",     location: "Panama City Beach, FL",    keywords: ["ironman florida","imfl"],                               swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-chattanooga",      name: "Ironman Chattanooga",             series: "Ironman",     type: "Full",     location: "Chattanooga, TN",          keywords: ["ironman chattanooga","imchoo"],                         swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-louisville",       name: "Ironman Louisville",              series: "Ironman",     type: "Full",     location: "Louisville, KY",           keywords: ["ironman louisville","imlou"],                           swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-wisc",             name: "Ironman Wisconsin",               series: "Ironman",     type: "Full",     location: "Madison, WI",              keywords: ["ironman wisconsin","imwi"],                             swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-md",               name: "Ironman Maryland",                series: "Ironman",     type: "Full",     location: "Cambridge, MD",            keywords: ["ironman maryland","immd"],                              swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-mt",               name: "Ironman Mont-Tremblant",          series: "Ironman",     type: "Full",     location: "Mont-Tremblant, QC",       keywords: ["ironman mont-tremblant","immt"],                        swim: 3.86, bike: 180.2, run: 42.2 },
+  { id: "im-canada",           name: "Ironman Canada",                  series: "Ironman",     type: "Full",     location: "Penticton, BC",            keywords: ["ironman canada","penticton"],                           swim: 3.86, bike: 180.2, run: 42.2 },
+  // ── Ironman 70.3 ─────────────────────────────────────────────────────────
+  { id: "im703-oceanside",     name: "Ironman 70.3 Oceanside",          series: "Ironman",     type: "70.3",     location: "Oceanside, CA",            keywords: ["oceanside","70.3 oceanside"],                           swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-santa-cruz",    name: "Ironman 70.3 Santa Cruz",         series: "Ironman",     type: "70.3",     location: "Santa Cruz, CA",           keywords: ["santa cruz 70.3","70.3 santa cruz","santa cruz tri"],   swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-eagleman",      name: "Ironman 70.3 Eagleman",           series: "Ironman",     type: "70.3",     location: "Cambridge, MD",            keywords: ["eagleman"],                                            swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-raleigh",       name: "Ironman 70.3 Raleigh",            series: "Ironman",     type: "70.3",     location: "Raleigh, NC",              keywords: ["raleigh 70.3","70.3 raleigh"],                          swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-vineman",       name: "Vineman 70.3",                    series: "Ironman",     type: "70.3",     location: "Windsor, CA",              keywords: ["vineman"],                                             swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-boulder",       name: "Ironman 70.3 Boulder",            series: "Ironman",     type: "70.3",     location: "Boulder, CO",              keywords: ["boulder 70.3","70.3 boulder"],                          swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-steelhead",     name: "Ironman 70.3 Steelhead",          series: "Ironman",     type: "70.3",     location: "Benton Harbor, MI",        keywords: ["steelhead"],                                           swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-mont-tremblant",name: "Ironman 70.3 Mont-Tremblant",     series: "Ironman",     type: "70.3",     location: "Mont-Tremblant, QC",       keywords: ["70.3 mont-tremblant"],                                 swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-austin",        name: "Ironman 70.3 Austin",             series: "Ironman",     type: "70.3",     location: "Austin, TX",               keywords: ["austin 70.3","70.3 austin"],                            swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-waco",          name: "Ironman 70.3 Waco",               series: "Ironman",     type: "70.3",     location: "Waco, TX",                 keywords: ["waco 70.3","70.3 waco"],                                swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-florida",       name: "Ironman 70.3 Florida",            series: "Ironman",     type: "70.3",     location: "Haines City, FL",          keywords: ["florida 70.3","70.3 florida"],                          swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-worlds",        name: "Ironman 70.3 World Championship", series: "Ironman",     type: "70.3",     location: "Various",                  keywords: ["70.3 world championship","worlds 70.3"],                swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-cda",           name: "Ironman 70.3 Coeur d'Alene",      series: "Ironman",     type: "70.3",     location: "Coeur d'Alene, ID",        keywords: ["70.3 coeur d'alene","70.3 cda"],                        swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-chattanooga",   name: "Ironman 70.3 Chattanooga",        series: "Ironman",     type: "70.3",     location: "Chattanooga, TN",          keywords: ["70.3 chattanooga","choo 70.3"],                         swim: 1.9, bike: 90, run: 21.1 },
+  { id: "im703-new-orleans",   name: "Ironman 70.3 New Orleans",        series: "Ironman",     type: "70.3",     location: "New Orleans, LA",          keywords: ["new orleans 70.3","70.3 new orleans"],                  swim: 1.9, bike: 90, run: 21.1 },
+  // ── Challenge Series ──────────────────────────────────────────────────────
+  { id: "challenge-roth",      name: "Challenge Roth",                  series: "Challenge",   type: "Full",     location: "Roth, Germany",            keywords: ["challenge roth","roth"],                                swim: 3.86, bike: 180, run: 42.2 },
+  // ── Olympic / Sprint / Local ──────────────────────────────────────────────
+  { id: "escape-alcatraz",     name: "Escape from Alcatraz Triathlon",  series: "Independent", type: "Olympic",  location: "San Francisco, CA",        keywords: ["escape from alcatraz","alcatraz"],                      swim: 2.4, bike: 29, run: 13 },
+  { id: "wildflower",          name: "Wildflower Triathlon",            series: "Independent", type: "Olympic",  location: "Lake San Antonio, CA",     keywords: ["wildflower"],                                           swim: 1.5, bike: 40, run: 10 },
+  { id: "chicago-tri",         name: "Chicago Triathlon",               series: "Independent", type: "Olympic",  location: "Chicago, IL",              keywords: ["chicago triathlon","chicago tri"],                       swim: 1.5, bike: 40, run: 10 },
+  { id: "new-york-tri",        name: "New York City Triathlon",         series: "Independent", type: "Olympic",  location: "New York, NY",             keywords: ["new york triathlon","nyc tri"],                          swim: 1.5, bike: 40, run: 10 },
+  { id: "pacific-grove",       name: "Pacific Grove Triathlon",         series: "Independent", type: "Olympic",  location: "Pacific Grove, CA",        keywords: ["pacific grove"],                                        swim: 1.5, bike: 40, run: 10 },
+  // ── Hyrox ─────────────────────────────────────────────────────────────────
+  { id: "hyrox",               name: "Hyrox",                           series: "Hyrox",       type: "Hyrox",    location: "Various",                  keywords: ["hyrox"],                                                swim: 0, bike: 0, run: 8 },
+  // ── Aquathlon / Duathlon ──────────────────────────────────────────────────
+  { id: "aquathlon",           name: "Aquathlon",                       series: "USAT",        type: "Aquathlon",location: "Various",                  keywords: ["aquathlon"],                                            swim: 0.75, bike: 0, run: 5 },
+  { id: "duathlon",            name: "Duathlon",                        series: "USAT",        type: "Duathlon", location: "Various",                  keywords: ["duathlon"],                                             swim: 0, bike: 40, run: 10 },
+];
+
+const SERIES_COLORS = {
+  Ironman:     { bg: "rgba(252,76,2,0.15)",  text: "#FC4C02" },
+  Challenge:   { bg: "rgba(30,180,100,0.15)",text: "#1EB464" },
+  Hyrox:       { bg: "rgba(234,179,8,0.15)", text: "#EAB308" },
+  USAT:        { bg: "rgba(59,130,246,0.15)",text: "#3B82F6" },
+  Independent: { bg: "rgba(168,85,247,0.12)",text: "#A855F7" },
+  Abbott:      { bg: "rgba(0,212,255,0.12)", text: "#00D4FF" },
+  NYRR:        { bg: "rgba(0,230,118,0.12)", text: "#00E676" },
+  RunDisney:   { bg: "rgba(234,179,8,0.12)", text: "#EAB308" },
+  Major:       { bg: "rgba(255,255,255,0.05)", text: "rgba(255,255,255,0.45)" },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ROAD RACE DATABASE — marathons & half marathons with GPS start coords
+// lat/lng = race start line; matched against Strava activity start_latlng
+// within LOCATION_MATCH_KM radius. Add your own races here.
+// ═══════════════════════════════════════════════════════════════════════════════
+const LOCATION_MATCH_KM = 5;
+
+const KNOWN_ROAD_RACES = [
+  // ── World Marathon Majors ─────────────────────────────────────────────────
+  { id: "boston",        name: "Boston Marathon",                    series: "Abbott",    type: "Marathon",     location: "Boston, MA",          lat: 42.2977, lng: -71.5224, keywords: ["boston marathon"] },
+  { id: "nyc-marathon",  name: "TCS New York City Marathon",         series: "Abbott",    type: "Marathon",     location: "New York, NY",         lat: 40.6013, lng: -74.0552, keywords: ["new york marathon","nyc marathon","tcs nyc marathon"] },
+  { id: "chicago-m",     name: "Bank of America Chicago Marathon",   series: "Abbott",    type: "Marathon",     location: "Chicago, IL",          lat: 41.8828, lng: -87.6233, keywords: ["chicago marathon"] },
+  { id: "london",        name: "TCS London Marathon",                series: "Abbott",    type: "Marathon",     location: "London, UK",           lat: 51.4884, lng: -0.0003,  keywords: ["london marathon","tcs london"] },
+  { id: "berlin",        name: "BMW Berlin Marathon",                series: "Abbott",    type: "Marathon",     location: "Berlin, Germany",      lat: 52.5145, lng: 13.3499,  keywords: ["berlin marathon","bmw berlin"] },
+  { id: "tokyo",         name: "Tokyo Marathon",                     series: "Abbott",    type: "Marathon",     location: "Tokyo, Japan",         lat: 35.6815, lng: 139.7667, keywords: ["tokyo marathon"] },
+  // ── US Marathons ──────────────────────────────────────────────────────────
+  { id: "la-marathon",   name: "Los Angeles Marathon",               series: "Major",     type: "Marathon",     location: "Los Angeles, CA",      lat: 34.0736, lng: -118.2400,keywords: ["los angeles marathon","la marathon"] },
+  { id: "marine",        name: "Marine Corps Marathon",              series: "Major",     type: "Marathon",     location: "Arlington, VA",        lat: 38.8735, lng: -77.0663, keywords: ["marine corps marathon","mcm"] },
+  { id: "sf-marathon",   name: "San Francisco Marathon",             series: "Major",     type: "Marathon",     location: "San Francisco, CA",    lat: 37.8079, lng: -122.4169,keywords: ["san francisco marathon","sf marathon"] },
+  { id: "big-sur-m",     name: "Big Sur International Marathon",     series: "Major",     type: "Marathon",     location: "Big Sur, CA",          lat: 36.5285, lng: -121.9297,keywords: ["big sur marathon","big sur international"] },
+  { id: "cim",           name: "California International Marathon",  series: "Major",     type: "Marathon",     location: "Folsom, CA",           lat: 38.6618, lng: -121.1741,keywords: ["california international marathon","cim"] },
+  { id: "houston-m",     name: "Chevron Houston Marathon",           series: "Major",     type: "Marathon",     location: "Houston, TX",          lat: 29.7604, lng: -95.3700, keywords: ["houston marathon","chevron houston"] },
+  { id: "disney-m",      name: "Walt Disney World Marathon",         series: "RunDisney", type: "Marathon",     location: "Orlando, FL",          lat: 28.3725, lng: -81.5546, keywords: ["disney world marathon","rundisney marathon","disney marathon"] },
+  { id: "twin-cities",   name: "Medtronic Twin Cities Marathon",     series: "Major",     type: "Marathon",     location: "Minneapolis, MN",      lat: 44.9726, lng: -93.2716, keywords: ["twin cities marathon","medtronic twin cities"] },
+  { id: "philly-m",      name: "Philadelphia Marathon",              series: "Major",     type: "Marathon",     location: "Philadelphia, PA",     lat: 39.9656, lng: -75.1810, keywords: ["philadelphia marathon","philly marathon"] },
+  { id: "portland-m",    name: "Portland Marathon",                  series: "Major",     type: "Marathon",     location: "Portland, OR",         lat: 45.5051, lng: -122.6707,keywords: ["portland marathon"] },
+  { id: "seattle-m",     name: "Seattle Marathon",                   series: "Major",     type: "Marathon",     location: "Seattle, WA",          lat: 47.5801, lng: -122.3443,keywords: ["seattle marathon"] },
+  { id: "denver-m",      name: "Colfax Marathon",                    series: "Major",     type: "Marathon",     location: "Denver, CO",           lat: 39.7467, lng: -104.9517,keywords: ["colfax marathon","denver marathon"] },
+  { id: "austin-m",      name: "3M Austin Marathon",                 series: "Major",     type: "Marathon",     location: "Austin, TX",           lat: 30.2672, lng: -97.7431, keywords: ["austin marathon","3m austin"] },
+  { id: "miami-m",       name: "Life Time Miami Marathon",           series: "Major",     type: "Marathon",     location: "Miami, FL",            lat: 25.7617, lng: -80.1918, keywords: ["miami marathon","life time miami"] },
+  { id: "rnr-vegas",     name: "Rock 'n' Roll Las Vegas Marathon",   series: "Major",     type: "Marathon",     location: "Las Vegas, NV",        lat: 36.1699, lng: -115.1398,keywords: ["las vegas marathon","rock n roll vegas","rnr vegas"] },
+  { id: "grandmas",      name: "Grandma's Marathon",                 series: "Major",     type: "Marathon",     location: "Duluth, MN",           lat: 47.0394, lng: -91.6576, keywords: ["grandma's marathon","grandmas marathon"] },
+  // ── International Marathons ───────────────────────────────────────────────
+  { id: "paris-m",       name: "Schneider Electric Paris Marathon",  series: "Major",     type: "Marathon",     location: "Paris, France",        lat: 48.8698, lng: 2.3078,   keywords: ["paris marathon"] },
+  { id: "amsterdam-m",   name: "TCS Amsterdam Marathon",             series: "Major",     type: "Marathon",     location: "Amsterdam, Netherlands",lat: 52.3676, lng: 4.9041,  keywords: ["amsterdam marathon","tcs amsterdam"] },
+  { id: "sydney-m",      name: "Sydney Running Festival Marathon",   series: "Major",     type: "Marathon",     location: "Sydney, Australia",    lat: -33.8688, lng: 151.2093,keywords: ["sydney marathon","sydney running festival"] },
+  // ── US Half Marathons ─────────────────────────────────────────────────────
+  { id: "nyc-half",      name: "United Airlines NYC Half",           series: "NYRR",      type: "Half Marathon",location: "New York, NY",         lat: 40.7658, lng: -73.9777, keywords: ["nyc half","new york city half","united airlines nyc half"] },
+  { id: "brooklyn-half", name: "Brooklyn Half Marathon",             series: "NYRR",      type: "Half Marathon",location: "Brooklyn, NY",         lat: 40.6603, lng: -73.9683, keywords: ["brooklyn half","brooklyn half marathon"] },
+  { id: "sf-half",       name: "San Francisco Half Marathon",        series: "Major",     type: "Half Marathon",location: "San Francisco, CA",    lat: 37.8079, lng: -122.4169,keywords: ["san francisco half","sf half marathon"] },
+  { id: "chicago-half",  name: "Chicago Half Marathon",              series: "Major",     type: "Half Marathon",location: "Chicago, IL",          lat: 41.8303, lng: -87.6167, keywords: ["chicago half marathon"] },
+  { id: "la-half",       name: "LA Big 5K/Half",                     series: "Major",     type: "Half Marathon",location: "Los Angeles, CA",      lat: 34.0736, lng: -118.2400,keywords: ["la half marathon","los angeles half"] },
+  { id: "philly-half",   name: "Philadelphia Half Marathon",         series: "Major",     type: "Half Marathon",location: "Philadelphia, PA",     lat: 39.9526, lng: -75.1652, keywords: ["philadelphia half","philly half"] },
+  { id: "rnr-la-half",   name: "Rock 'n' Roll Los Angeles Half",     series: "Major",     type: "Half Marathon",location: "Los Angeles, CA",      lat: 34.0522, lng: -118.2437,keywords: ["rock n roll la half","rnr la half"] },
+  { id: "dopey-half",    name: "Walt Disney World Half Marathon",    series: "RunDisney", type: "Half Marathon",location: "Orlando, FL",          lat: 28.3725, lng: -81.5546, keywords: ["disney half","rundisney half","dopey"] },
+  { id: "dc-half",       name: "United Airlines DC Half",            series: "Major",     type: "Half Marathon",location: "Washington, DC",       lat: 38.8899, lng: -77.0091, keywords: ["dc half","washington half","rock n roll dc"] },
+  { id: "houston-half",  name: "Chevron Houston Half Marathon",      series: "Major",     type: "Half Marathon",location: "Houston, TX",          lat: 29.7604, lng: -95.3700, keywords: ["houston half","chevron houston half"] },
+  { id: "nyc-marathon-half", name: "New York Half Marathon",         series: "NYRR",      type: "Half Marathon",location: "New York, NY",         lat: 40.7749, lng: -73.9760, keywords: ["new york half marathon","nyrr half"] },
+];
+
+// Haversine distance in km between two lat/lng points
+function haversineKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Detect standalone marathon / half marathon runs (not triathlon legs)
+const TRI_NAME_KEYWORDS = ["ironman","triathlon","70.3"," tri ","tri -","duathlon"];
+function detectRoadRaces(activities) {
+  const MARATHON_MIN = 41500, MARATHON_MAX = 44500;
+  const HALF_MIN = 20000, HALF_MAX = 22800;
+
+  const results = [];
+  activities.forEach(a => {
+    if (classifySport(a) !== "run") return;
+    const dist = a.distance || 0;
+    const isMarathon = dist >= MARATHON_MIN && dist <= MARATHON_MAX;
+    const isHalf = dist >= HALF_MIN && dist <= HALF_MAX;
+    if (!isMarathon && !isHalf) return;
+
+    // Skip if this is a triathlon run leg
+    const nameLower = (a.name || "").toLowerCase();
+    if (TRI_NAME_KEYWORDS.some(kw => nameLower.includes(kw))) return;
+
+    const raceType = isMarathon ? "Marathon" : "Half Marathon";
+    const date = a.start_date_local?.slice(0, 10) || a.start_date?.slice(0, 10);
+    const latlng = a.start_latlng; // [lat, lng] from real Strava data
+
+    const candidates = KNOWN_ROAD_RACES.filter(r => r.type === raceType);
+    let known = null;
+
+    // 1. GPS location match (most reliable — real Strava data has start_latlng)
+    if (latlng?.length === 2) {
+      let bestKm = Infinity;
+      for (const c of candidates) {
+        const km = haversineKm(latlng[0], latlng[1], c.lat, c.lng);
+        if (km < LOCATION_MATCH_KM && km < bestKm) { bestKm = km; known = c; }
+      }
+    }
+
+    // 2. Name keyword match
+    if (!known) {
+      for (const c of candidates) {
+        if (c.keywords.some(kw => nameLower.includes(kw))) { known = c; break; }
+      }
+    }
+
+    results.push({
+      date,
+      name: known ? known.name : (a.name || raceType),
+      type: raceType,
+      series: known?.series || "Independent",
+      location: known?.location,
+      knownRef: known,
+      category: "road",
+      activity: a,
+      totalTime: a.elapsed_time || a.moving_time || 0,
+      totalDist: dist,
+    });
+  });
+
+  return results.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+// Try to match detected race activities to a KNOWN_RACES entry
+function matchKnownRace(activityNames, bikeDistKm) {
+  const combined = activityNames.join(" ").toLowerCase();
+  let best = null, bestScore = 0;
+  for (const known of KNOWN_RACES) {
+    const hits = known.keywords.filter(kw => combined.includes(kw)).length;
+    if (hits === 0) continue;
+    let score = hits * 10;
+    if (known.bike > 0 && bikeDistKm > 0) {
+      score += (Math.min(bikeDistKm, known.bike) / Math.max(bikeDistKm, known.bike)) * 5;
+    }
+    if (score > bestScore) { bestScore = score; best = known; }
+  }
+  return best;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // UTILITIES
 // ═══════════════════════════════════════════════════════════════════════════════
 function classifySport(activity) {
@@ -66,10 +260,9 @@ function paceValue(metersPerSec, sport) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// RACE DETECTION — groups same-day swim→bike→run into triathlon events
+// RACE DETECTION — groups same-day swim→bike→run into race or brick events
 // ═══════════════════════════════════════════════════════════════════════════════
 function detectRaces(activities) {
-  // Group by date
   const byDate = {};
   activities.forEach(a => {
     const sport = classifySport(a);
@@ -84,39 +277,50 @@ function detectRaces(activities) {
   Object.entries(byDate).forEach(([date, acts]) => {
     const sports = new Set(acts.map(a => a._sport));
     const hasRaceKeyword = acts.some(a => RACE_KEYWORDS.some(kw => (a.name || "").toLowerCase().includes(kw)));
-    
-    // Triathlon: has at least 2 of swim/bike/run on same day
     const triSports = ["swim","bike","run"].filter(s => sports.has(s));
-    if (triSports.length >= 2 || (triSports.length >= 1 && hasRaceKeyword)) {
-      const legs = {};
-      triSports.forEach(s => {
-        const matching = acts.filter(a => a._sport === s).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
-        legs[s] = matching[0]; // take the first/longest per sport
-      });
 
-      const totalTime = Object.values(legs).reduce((sum, a) => sum + (a.elapsed_time || a.moving_time || 0), 0);
-      const totalDist = Object.values(legs).reduce((sum, a) => sum + (a.distance || 0), 0);
-      
-      // Infer race type from bike distance
-      const bikeDist = legs.bike ? (legs.bike.distance || 0) / 1000 : 0;
-      let raceType = "Sprint";
-      if (bikeDist > 150) raceType = "Full";
-      else if (bikeDist > 70) raceType = "70.3";
-      else if (bikeDist > 30) raceType = "Olympic";
+    // Need at least 2 disciplines, or 1 + a race keyword
+    if (triSports.length < 2 && !(triSports.length >= 1 && hasRaceKeyword)) return;
 
-      // Use activity name for race name, prefer one with race keyword
+    const legs = {};
+    triSports.forEach(s => {
+      const matching = acts.filter(a => a._sport === s).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+      legs[s] = matching[0];
+    });
+
+    const totalTime = Object.values(legs).reduce((sum, a) => sum + (a.elapsed_time || a.moving_time || 0), 0);
+    const totalDist = Object.values(legs).reduce((sum, a) => sum + (a.distance || 0), 0);
+    const bikeDistKm = legs.bike ? (legs.bike.distance || 0) / 1000 : 0;
+
+    // Try to match against known races config first
+    const allNames = acts.map(a => a.name || "");
+    const known = matchKnownRace(allNames, bikeDistKm);
+
+    let name, raceType, series, location, knownRef;
+    if (known) {
+      name = known.name;
+      raceType = known.type;
+      series = known.series;
+      location = known.location;
+      knownRef = known;
+    } else if (hasRaceKeyword) {
+      // Named as a race but not in config — infer from distance
       const namedAct = acts.find(a => RACE_KEYWORDS.some(kw => (a.name || "").toLowerCase().includes(kw))) || acts[0];
-
-      races.push({
-        date,
-        name: namedAct.name || `Triathlon - ${date}`,
-        type: raceType,
-        legs,
-        totalTime,
-        totalDist,
-        sports: triSports,
-      });
+      name = namedAct.name || `Race - ${date}`;
+      series = "Independent";
+      if (bikeDistKm > 150) raceType = "Full";
+      else if (bikeDistKm > 70) raceType = "70.3";
+      else if (bikeDistKm > 30) raceType = "Olympic";
+      else raceType = "Sprint";
+    } else {
+      // Same-day multi-sport but no race keyword — label as Brick Workout, not a race
+      raceType = "Brick";
+      series = "Training";
+      const longestAct = acts.reduce((best, a) => (a.moving_time || 0) > (best.moving_time || 0) ? a : best, acts[0]);
+      name = longestAct.name || `Brick - ${date}`;
     }
+
+    races.push({ date, name, type: raceType, series: series || "Independent", location, legs, totalTime, totalDist, sports: triSports, knownRef });
   });
 
   return races.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -232,6 +436,37 @@ function generateDemoData() {
           max_heartrate: 178 + Math.random() * 10,
           total_elevation_gain: dist / 1000 * (5 + Math.random() * 10),
           suffer_score: Math.round(50 + Math.random() * 80),
+        });
+      }
+      // Inject a half marathon in March and a marathon in November
+      if (m === 2 && y >= 2021) { // March = half marathon
+        const day = 12;
+        const dateStr = `${y}-03-${String(day).padStart(2,"0")}`;
+        const speed = 3.2 + (y - 2021) * 0.04;
+        const dist = 21097;
+        activities.push({
+          id: id++, name: "SF Half Marathon", type: "Run", sport_type: "Run",
+          start_date_local: `${dateStr}T07:30:00Z`, start_date: `${dateStr}T15:30:00Z`,
+          start_latlng: [37.8079, -122.4169],
+          distance: dist, moving_time: dist / speed, elapsed_time: dist / speed * 1.02,
+          average_speed: speed, average_heartrate: 168, max_heartrate: 182,
+          total_elevation_gain: 180, suffer_score: 160,
+        });
+      }
+      if (m === 10 && y >= 2022) { // November = marathon
+        const day = 5;
+        const dateStr = `${y}-11-${String(day).padStart(2,"0")}`;
+        const speed = 2.9 + (y - 2022) * 0.03;
+        const dist = 42195;
+        const names = { 2022: "NYC Marathon", 2023: "California International Marathon", 2024: "NYC Marathon", 2025: "Boston Marathon" };
+        const latlngs = { 2022: [40.6013, -74.0552], 2023: [38.6618, -121.1741], 2024: [40.6013, -74.0552], 2025: [42.2977, -71.5224] };
+        activities.push({
+          id: id++, name: names[y] || "Marathon", type: "Run", sport_type: "Run",
+          start_date_local: `${dateStr}T08:00:00Z`, start_date: `${dateStr}T16:00:00Z`,
+          start_latlng: latlngs[y] || [40.6013, -74.0552],
+          distance: dist, moving_time: dist / speed, elapsed_time: dist / speed * 1.015,
+          average_speed: speed, average_heartrate: 162, max_heartrate: 178,
+          total_elevation_gain: 310, suffer_score: 220,
         });
       }
       // Inject race days (2 per year in season)
@@ -396,7 +631,9 @@ function processActivities(activities) {
     pbs[sport] = { fastest, longest };
   });
 
-  return { triActivities, years, monthlyByYear, weeklyData, paceByWeek, zoneData, races, pbs, maxHR };
+  const roadRaces = detectRoadRaces(triActivities);
+
+  return { triActivities, years, monthlyByYear, weeklyData, paceByWeek, zoneData, races, roadRaces, pbs, maxHR };
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -426,10 +663,25 @@ const Card = ({ children, style, accent }) => (
   </div>
 );
 
-const Section = ({ title, right, children }) => (
+const ScopeTag = ({ label, color }) => (
+  <span style={{
+    fontSize: 9, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+    padding: "2px 7px", borderRadius: 6,
+    background: color === "season" ? "rgba(0,212,255,0.1)" : color === "rolling" ? "rgba(255,140,0,0.1)" : "rgba(255,255,255,0.05)",
+    color: color === "season" ? "#00D4FF" : color === "rolling" ? "#FF8C00" : "rgba(255,255,255,0.3)",
+    fontFamily: "'DM Mono', monospace",
+  }}>{label}</span>
+);
+
+const Section = ({ title, right, children, scope }) => (
   <div style={{ marginTop: 28 }}>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
-      <h2 style={{ fontSize: 16, fontWeight: 600, color: "#fff", fontFamily: "'Outfit', sans-serif", margin: 0, letterSpacing: -0.3 }}>{title}</h2>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: "#fff", fontFamily: "'Outfit', sans-serif", margin: 0, letterSpacing: -0.3 }}>{title}</h2>
+        {scope === "season"  && <ScopeTag label="Season" color="season" />}
+        {scope === "rolling" && <ScopeTag label="Rolling" color="rolling" />}
+        {scope === "alltime" && <ScopeTag label="All-time" color="alltime" />}
+      </div>
       {right}
     </div>
     {children}
@@ -695,7 +947,7 @@ export default function TriPulse() {
           </div>
 
           {/* Time split + zones side by side */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12, marginTop: 16 }}>
             <Card>
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "rgba(255,255,255,0.6)" }}>Time by Discipline</div>
               <ResponsiveContainer width="100%" height={200}>
@@ -709,7 +961,7 @@ export default function TriPulse() {
               </ResponsiveContainer>
             </Card>
             <Card>
-              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "rgba(255,255,255,0.6)" }}>HR Zone Distribution</div>
+              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: "rgba(255,255,255,0.6)" }}>HR Zone Distribution <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 0.6, padding: "1px 6px", borderRadius: 5, background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.3)", fontFamily: "'DM Mono', monospace", textTransform: "uppercase" }}>All-time</span></div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8, paddingTop: 6 }}>
                 {processed.zoneData.map((z, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -725,7 +977,7 @@ export default function TriPulse() {
           </div>
 
           {/* Weekly training */}
-          <Section title="Weekly Training Hours (Last 12 Weeks)">
+          <Section title="Weekly Training Hours (Last 12 Weeks)" scope="rolling">
             <Card>
               <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={processed.weeklyData}>
@@ -750,10 +1002,10 @@ export default function TriPulse() {
           </Section>
 
           {/* Recent races preview */}
-          {processed.races.length > 0 && (
-            <Section title="Recent Races" right={<button onClick={() => setView("races")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", fontSize: 12, fontFamily: "'Outfit', sans-serif" }}>View all →</button>}>
+          {processed.races.filter(r => r.type !== "Brick").length > 0 && (
+            <Section title="Recent Races" scope="alltime" right={<button onClick={() => setView("races")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", fontSize: 12, fontFamily: "'Outfit', sans-serif" }}>View all →</button>}>
               <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
-                {processed.races.slice(0, 4).map((r, i) => (
+                {processed.races.filter(r => r.type !== "Brick").slice(0, 4).map((r, i) => (
                   <Card key={i} style={{ minWidth: 220, flex: "0 0 auto" }}>
                     <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace" }}>{r.date}</div>
                     <div style={{ fontSize: 14, fontWeight: 600, marginTop: 4, marginBottom: 8, lineHeight: 1.3 }}>{r.name}</div>
@@ -777,7 +1029,7 @@ export default function TriPulse() {
 
         {/* ═══ VOLUME ═══ */}
         {view === "volume" && (<>
-          <Section title="Monthly Volume" right={
+          <Section title="Monthly Volume" scope="season" right={
             <Pill options={[{ value: "distance", label: "Distance (km)" }, { value: "time", label: "Hours" }]} value={volumeMetric} onChange={setVolumeMetric} />
           }>
             <Card>
@@ -795,7 +1047,7 @@ export default function TriPulse() {
             </Card>
           </Section>
 
-          <Section title="Year-over-Year Total Volume (km)">
+          <Section title="Year-over-Year Total Volume (km)" scope="alltime">
             <Card>
               <ResponsiveContainer width="100%" height={240}>
                 <LineChart data={yoyData}>
@@ -819,7 +1071,7 @@ export default function TriPulse() {
           </Section>
 
           {/* Monthly sessions breakdown */}
-          <Section title="Monthly Session Count">
+          <Section title="Monthly Session Count" scope="season">
             <Card>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={yearData.map(m => ({ month: m.month, Swim: m.swimSessions, Bike: m.bikeSessions, Run: m.runSessions }))} barGap={1}>
@@ -836,7 +1088,7 @@ export default function TriPulse() {
           </Section>
 
           {/* Monthly elevation */}
-          <Section title="Monthly Elevation Gain (m)">
+          <Section title="Monthly Elevation Gain (m)" scope="season">
             <Card>
               <ResponsiveContainer width="100%" height={180}>
                 <AreaChart data={yearData.map(m => ({ month: m.month, elevation: m.elevation }))}>
@@ -859,7 +1111,7 @@ export default function TriPulse() {
 
         {/* ═══ PACE ═══ */}
         {view === "pace" && (<>
-          <Section title="Pace & Speed Trends (4-week rolling avg)">
+          <Section title="Pace & Speed Trends" scope="rolling">
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 12 }}>
               {[
                 { key: "swimPace", label: "Swim Pace (min/100m)", color: SPORT.swim.color, reversed: true },
@@ -883,7 +1135,7 @@ export default function TriPulse() {
           </Section>
 
           {/* Personal bests */}
-          <Section title="Personal Bests">
+          <Section title="Personal Bests" scope="alltime">
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
               {Object.entries(processed.pbs).map(([sport, { fastest, longest }]) => (
                 <Card key={sport} accent={SPORT[sport].color}>
@@ -913,75 +1165,157 @@ export default function TriPulse() {
         </>)}
 
         {/* ═══ RACES ═══ */}
-        {view === "races" && (<>
-          <Section title={`Detected Races (${processed.races.length})`}>
-            {processed.races.length === 0 ? (
-              <Card><p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, margin: 0 }}>No races detected yet. Races are identified when swim + bike + run activities appear on the same day, or activities contain race-related keywords.</p></Card>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                {processed.races.map((r, i) => (
-                  <Card key={i} style={{ padding: "16px 20px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>
-                      <div>
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>{r.date}</div>
-                        <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>{r.name}</div>
-                        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-                          <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 20, background: "rgba(168,85,247,0.12)", color: "#A855F7", fontWeight: 600 }}>{r.type}</span>
-                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontFamily: "'DM Mono', monospace" }}>
-                            {(r.totalDist / 1000).toFixed(1)} km total
-                          </span>
-                        </div>
-                      </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, fontFamily: "'DM Mono', monospace", color: "#fff" }}>
-                        {fmtDuration(r.totalTime)}
-                      </div>
-                    </div>
-                    {/* Leg splits */}
-                    <div style={{ display: "flex", gap: 16, marginTop: 14, flexWrap: "wrap" }}>
-                      {r.sports.map(s => {
-                        const leg = r.legs[s];
-                        if (!leg) return null;
-                        return (
-                          <div key={s} style={{ flex: 1, minWidth: 120, padding: "10px 14px", background: SPORT[s].dim, borderRadius: 10, border: `1px solid ${SPORT[s].color}22` }}>
-                            <div style={{ fontSize: 11, color: SPORT[s].color, fontWeight: 600, marginBottom: 4 }}>{SPORT[s].icon} {SPORT[s].label}</div>
-                            <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "'DM Mono', monospace" }}>{fmtDuration(leg.elapsed_time || leg.moving_time)}</div>
-                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace", marginTop: 2 }}>
-                              {(leg.distance / 1000).toFixed(1)} km · {fmtPace(leg.average_speed, s)}
+        {view === "races" && (() => {
+          const confirmedRaces = processed.races.filter(r => r.type !== "Brick");
+          const bricks = processed.races.filter(r => r.type === "Brick");
+          const roadRaces = processed.roadRaces || [];
+          return (<>
+            <Section title={`Race History (${confirmedRaces.length})`}>
+              {confirmedRaces.length === 0 ? (
+                <Card><p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, margin: 0 }}>No races detected yet. Races are matched from the built-in database or identified by race keywords in your Strava activity names (e.g. "Ironman", "70.3", "race").</p></Card>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {confirmedRaces.map((r, i) => {
+                    const sc = SERIES_COLORS[r.series] || SERIES_COLORS.Independent;
+                    return (
+                      <Card key={i} style={{ padding: "16px 20px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>
+                              {r.date}{r.location ? ` · ${r.location}` : ""}
+                            </div>
+                            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6, lineHeight: 1.3 }}>{r.name}</div>
+                            <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                              {r.series && r.series !== "Independent" && (
+                                <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: sc.bg, color: sc.text, fontWeight: 700 }}>{r.series}</span>
+                              )}
+                              <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.55)", fontWeight: 600 }}>{r.type}</span>
+                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace" }}>
+                                {(r.totalDist / 1000).toFixed(1)} km
+                              </span>
+                              {r.knownRef && (
+                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", fontFamily: "'DM Mono', monospace" }}>verified</span>
+                              )}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </Section>
+                          <div style={{ fontSize: 24, fontWeight: 800, fontFamily: "'DM Mono', monospace", color: "#fff", flexShrink: 0 }}>
+                            {fmtDuration(r.totalTime)}
+                          </div>
+                        </div>
+                        <div style={{ display: "flex", gap: 10, marginTop: 14, flexWrap: "wrap" }}>
+                          {r.sports.map(s => {
+                            const leg = r.legs[s];
+                            if (!leg) return null;
+                            return (
+                              <div key={s} style={{ flex: 1, minWidth: 100, padding: "10px 12px", background: SPORT[s].dim, borderRadius: 10, border: `1px solid ${SPORT[s].color}22` }}>
+                                <div style={{ fontSize: 11, color: SPORT[s].color, fontWeight: 600, marginBottom: 4 }}>{SPORT[s].icon} {SPORT[s].label}</div>
+                                <div style={{ fontSize: 16, fontWeight: 700, fontFamily: "'DM Mono', monospace" }}>{fmtDuration(leg.elapsed_time || leg.moving_time)}</div>
+                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace", marginTop: 2 }}>
+                                  {(leg.distance / 1000).toFixed(1)} km · {fmtPace(leg.average_speed, s)}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </Section>
 
-          {/* How race detection works */}
-          <Section title="How Race Detection Works">
-            <Card style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>
-              <p style={{ margin: "0 0 8px" }}>TriPulse identifies races automatically by looking for patterns in your Strava activities:</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 12 }}>
-                <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                  <span style={{ color: "#00D4FF", fontWeight: 600, flexShrink: 0 }}>1.</span>
-                  <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Same-day grouping</strong> — Swim, Bike, and Run activities on the same date are grouped together</span>
+            {bricks.length > 0 && (
+              <Section title={`Brick Workouts (${bricks.length})`}>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.3)", marginBottom: 10, fontFamily: "'DM Mono', monospace" }}>
+                  Same-day multi-sport sessions without race keywords — not counted as races
                 </div>
-                <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                  <span style={{ color: "#FF8C00", fontWeight: 600, flexShrink: 0 }}>2.</span>
-                  <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Keyword matching</strong> — Activity names containing "race", "triathlon", "ironman", "70.3", etc. boost detection confidence</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {bricks.map((r, i) => (
+                    <Card key={i} style={{ padding: "12px 16px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                        <div>
+                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", fontFamily: "'DM Mono', monospace" }}>{r.date}</div>
+                          <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2 }}>{r.name}</div>
+                        </div>
+                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                          {r.sports.map(s => (
+                            <span key={s} style={{ fontSize: 10, color: SPORT[s].color, fontFamily: "'DM Mono', monospace" }}>
+                              {SPORT[s].icon} {fmtDuration(r.legs[s]?.moving_time)}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
-                <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-                  <span style={{ color: "#00E676", fontWeight: 600, flexShrink: 0 }}>3.</span>
-                  <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Race type inference</strong> — Estimated from bike distance: Sprint (&lt;30km), Olympic (30-70km), 70.3 (70-150km), Full (150km+)</span>
+              </Section>
+            )}
+
+            {roadRaces.length > 0 && (
+              <Section title={`Road Races (${roadRaces.length})`} scope="alltime">
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {roadRaces.map((r, i) => {
+                    const sc = SERIES_COLORS[r.series] || SERIES_COLORS.Independent;
+                    const pace = r.activity?.average_speed;
+                    return (
+                      <Card key={i} style={{ padding: "16px 20px" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace", marginBottom: 4 }}>
+                              {r.date}{r.location ? ` · ${r.location}` : ""}
+                            </div>
+                            <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6, lineHeight: 1.3 }}>{r.name}</div>
+                            <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+                              {r.series && r.series !== "Independent" && (
+                                <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: sc.bg, color: sc.text, fontWeight: 700 }}>{r.series}</span>
+                              )}
+                              <span style={{ fontSize: 10, padding: "2px 8px", borderRadius: 20, background: SPORT.run.dim, color: SPORT.run.color, fontWeight: 600 }}>{r.type}</span>
+                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", fontFamily: "'DM Mono', monospace" }}>
+                                {(r.totalDist / 1000).toFixed(1)} km
+                              </span>
+                              {r.knownRef && <span style={{ fontSize: 10, color: "rgba(255,255,255,0.2)", fontFamily: "'DM Mono', monospace" }}>verified</span>}
+                            </div>
+                          </div>
+                          <div style={{ textAlign: "right", flexShrink: 0 }}>
+                            <div style={{ fontSize: 24, fontWeight: 800, fontFamily: "'DM Mono', monospace", color: "#fff" }}>{fmtDuration(r.totalTime)}</div>
+                            {pace && <div style={{ fontSize: 11, color: SPORT.run.color, fontFamily: "'DM Mono', monospace", marginTop: 2 }}>{fmtPace(pace, "run")}</div>}
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
                 </div>
-              </div>
-              <p style={{ margin: "12px 0 0", fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                Tip: Naming your Strava activities with race names helps detection. Even 2 of 3 disciplines on the same day will be flagged if a keyword is present.
-              </p>
-            </Card>
-          </Section>
-        </>)}
+              </Section>
+            )}
+
+            <Section title="How Race Identification Works">
+              <Card style={{ fontSize: 13, color: "rgba(255,255,255,0.45)", lineHeight: 1.7 }}>
+                <p style={{ margin: "0 0 12px" }}>TriPulse uses a two-layer approach to identify real races vs training bricks:</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: 12 }}>
+                  <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                    <span style={{ color: "#FC4C02", fontWeight: 700, flexShrink: 0 }}>1.</span>
+                    <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Known race database</strong> — A built-in list of {KNOWN_RACES.length}+ real events (Ironman, Challenge, local races). Activities are matched by name keywords + distance, and get the official race name, series, and location.</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                    <span style={{ color: "#FF8C00", fontWeight: 700, flexShrink: 0 }}>2.</span>
+                    <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Keyword fallback</strong> — Same-day multi-sport activities containing race keywords ("race", "ironman", "70.3", etc.) are flagged as races even if not in the database.</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                    <span style={{ color: "#00E676", fontWeight: 700, flexShrink: 0 }}>3.</span>
+                    <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Brick separation</strong> — Multi-sport days without race keywords are shown separately as Brick Workouts, not counted in race history.</span>
+                  </div>
+                  <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                    <span style={{ color: "#A855F7", fontWeight: 700, flexShrink: 0 }}>4.</span>
+                    <span><strong style={{ color: "rgba(255,255,255,0.7)" }}>Road races</strong> — Standalone runs in the 20–23km (half) or 41.5–44.5km (full) range are matched to {KNOWN_ROAD_RACES.length}+ known marathons using GPS start location (within {LOCATION_MATCH_KM}km), then name keywords as fallback.</span>
+                  </div>
+                </div>
+                <p style={{ margin: "12px 0 0", fontSize: 11, color: "rgba(255,255,255,0.25)" }}>
+                  Tip: For triathlons not in the database, name your Strava activity with the race name (e.g. "Ironman 70.3 Santa Cruz - Bike"). For road races, GPS matching works automatically on real Strava data.
+                </p>
+              </Card>
+            </Section>
+          </>);
+        })()}
 
       </div>
 
